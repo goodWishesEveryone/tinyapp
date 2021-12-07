@@ -4,11 +4,14 @@ const PORT = 8080; // default port 8080
 
 // tells the Express app to use EJS as its templating engine.
 app.set("view engine", "ejs");
-
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
+  S152tx: "https://www.tsn.ca/",
+  PsWtqz: "https://www.google.ca/",
 };
 
 app.get("/", (req, res) => {
@@ -23,14 +26,14 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-app.get("/set", (req, res) => {
-  const a = 1;
-  res.send(`a = ${a}`);
-});
+// app.get("/set", (req, res) => {
+//   const a = 1;
+//   res.send(`a = ${a}`);
+// });
 
-app.get("/fetch", (req, res) => {
-  res.send(`a = ${a}`);
-});
+// app.get("/fetch", (req, res) => {
+//   res.send(`a = ${a}`);
+// });
 
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
@@ -38,15 +41,40 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/hello", (req, res) => {
-  const templateVars = { greeting: 'Hello World!' };
+  const templateVars = { greeting: "Hello World!" };
   res.render("hello_world", templateVars);
 });
 
+// Make sure to place this code above the app.get("/urls/:id", ...) route definition.
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL],
+  };
   res.render("urls_show", templateVars);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  // redirection to long url after clicking shorturl
+  lurl = urlDatabase[req.params.shortURL];
+  res.redirect(lurl);
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+const generateRandomString = function () {
+  return Math.random().toString(36).substr(2, 6);
+};
+
+module.exports = { generateRandomString };
