@@ -58,15 +58,37 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+// app.get("/urls/:shortURL", (req, res) => {
+//   const shortURL = req.params.shortURL; //keys
+//   const longURL = urlDatabase[shortURL]; //values <---
+//   const templateVars = { shortURL, longURL };
+//   res.render("urls_show", templateVars);
+// });
+
+
 app.get("/u/:shortURL", (req, res) => {
   // redirection to long url after clicking shorturl
   lurl = urlDatabase[req.params.shortURL];
   res.redirect(lurl);
 });
 
+// app.post("/urls", (req, res) => {
+//   console.log(req.body);  // Log the POST request body to the console
+//   res.send("Ok");         // Respond with 'Ok' (we will replace this)
+// });
+
+// After we generate our new shortURL, we add it to our database.
+// Our server then responds with a redirect to /urls/:shortURL.
+// Our browser then makes a GET request to /urls/:shortURL.
+// Our server looks up the longURL from the database, sends the shortURL and longURL to the urls_show template, generates the HTML, and then sends this HTML back to the browser.
+// The browser then renders this HTML.
+
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  // Log the POST request body to the console
+  // calling the function
+  const newShortURL = generateRandomString();
+  urlDatabase[newShortURL] = req.body.longURL;
+  res.redirect(`/urls/${newShortURL}`);
 });
 
 app.listen(PORT, () => {
