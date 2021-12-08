@@ -18,6 +18,11 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+app.get('/urls', (req, res) => {
+  const templateVars = { urls: urlDatabase };
+  res.render('urls_index', templateVars);
+});
+
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
@@ -52,8 +57,8 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    shortURL: req.params.shortURL,              // keys
+    longURL: urlDatabase[req.params.shortURL],  // values
   };
   res.render("urls_show", templateVars);
 });
@@ -71,6 +76,8 @@ app.get("/u/:shortURL", (req, res) => {
   lurl = urlDatabase[req.params.shortURL];
   res.redirect(lurl);
 });
+
+
 
 // app.post("/urls", (req, res) => {
 //   console.log(req.body);  // Log the POST request body to the console
@@ -91,12 +98,44 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${newShortURL}`);
 });
 
+const generateRandomString = function() {
+  return Math.random().toString(36).substr(2, 6);
+};
+
+// UPDATE => update the info in the db
+app.post("/urls/:shortURL", (req, res) => {
+  // extract the id
+  const shortURL = req.params.shortURL;
+  // extract the question and anwer
+  const longURL = req.body.longURL;
+  // update the db
+  urlDatabase[shortURL] = longURL;
+  // console.log(urlDatabase);
+
+  res.redirect("/urls");
+});
+
+// DELETE & POST
+app.post("/urls/:shortURL/delete", (req, res) => {
+  // extract the id from the url
+  const shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+
+  res.redirect("/urls");
+});
+
+app.post('/urls', (req, res) => {
+  // console.log(req.body);
+  // console.log(req.body.longURL);
+  let shortU = generateRandomString();
+  urlDatabase[shortU] = req.body.longURL;
+  // console.log(urlDatabase);
+  res.redirect(`/urls/${shortU}`);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-const generateRandomString = function () {
-  return Math.random().toString(36).substr(2, 6);
-};
 
-module.exports = { generateRandomString };
+module.exports = {generateRandomString};
