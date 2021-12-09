@@ -19,13 +19,23 @@ const urlDatabase = {
 };
 
 // --------------------  USERS  --------------------------//
-const users = {};
-
-// -------------  generateRandomString for URL  -----------//
-const generateRandomString = function() {
-  return Math.random().toString(36).substr(2, 6);
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
 };
 
+// -------------  generateRandomString for URL  -----------//
+const generateRandomString = function () {
+  return Math.random().toString(36).substr(2, 6);
+};
 
 // -------------------  HOMEPAGE  /  --------------------- //
 // app.get("/", (req, res) => {
@@ -77,8 +87,8 @@ app.get("/urls/new", (req, res) => {
 // -----------------  /urls/:shortURL GET  ----------------//
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
-    shortURL: req.params.shortURL,              // keys
-    longURL: urlDatabase[req.params.shortURL],  // values
+    shortURL: req.params.shortURL, // keys
+    longURL: urlDatabase[req.params.shortURL], // values
     username: req.cookies["username"],
   };
   res.render("urls_show", templateVars);
@@ -104,13 +114,12 @@ app.get("/u/:shortURL", (req, res) => {
 // Our server looks up the longURL from the database, sends the shortURL and longURL to the urls_show template, generates the HTML, and then sends this HTML back to the browser.
 // The browser then renders this HTML.
 
-
 // ----------------  UPDATE /urls/:shortURL  ----------------//
 // update the info in the db
 app.post("/urls/:shortURL", (req, res) => {
-  const shortURL = req.params.shortURL;       // extract the id
+  const shortURL = req.params.shortURL; // extract the id
   const longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL;            // update the db
+  urlDatabase[shortURL] = longURL; // update the db
   res.redirect("/urls");
 });
 
@@ -221,7 +230,7 @@ app.post("/login", (req, res) => {
   let testName = req.body.username;
   let testPassword = req.body.password;
   if (users[testName] && users[testName] === testPassword) {
-    res.cookie("username",testName);
+    res.cookie("username", testName);
     res.redirect("/profile");
   } else {
     res.redirect("/login");
@@ -239,7 +248,6 @@ app.post("/logout", (req, res) => {
   // res.cookie("username", null);
   res.redirect("/urls");
 });
-
 
 // -------------------- LISTENING port -------------------//
 app.listen(PORT, () => {
