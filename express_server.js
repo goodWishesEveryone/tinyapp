@@ -10,7 +10,7 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// URL DATABASE
+// --------------  URL DATABASE  ------------------//
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
@@ -18,37 +18,55 @@ const urlDatabase = {
   PsWtqz: "https://www.google.ca/",
 };
 
+// --------------------  USERS  --------------------------//
 const users = {};
 
-// ROUTES
-// HOMEPAGE
+// -------------  generateRandomString for URL  -----------//
+const generateRandomString = function() {
+  return Math.random().toString(36).substr(2, 6);
+};
+
+
+// -------------------  HOMEPAGE  /  --------------------- //
+// app.get("/", (req, res) => {
+//   res.send("Hello!");
+// });
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const templateVars = {
+    username: req.cookies["username"],
+  };
+  res.render("urls_index", templateVars);
 });
 
+// --------------------  /urls GET  POST -------------------//
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   res.render("urls_index", templateVars);
 });
+app.post("/urls", (req, res) => {
+  // Log the POST request body to the console
+  // calling the function
+  const newShortURL = generateRandomString();
+  urlDatabase[newShortURL] = req.body.longURL;
+  res.redirect(`/urls/${newShortURL}`);
+});
 
+// --------------------  /urls.json GET  ----------------//
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
+// --------------------  /hello GET  --------------------//
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
-app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);
-});
+// app.get("/hello", (req, res) => {
+//   const templateVars = { greeting: "Hello World!" };
+//   res.render("hello_world", templateVars);
+// });
 
-app.get("/hello", (req, res) => {
-  const templateVars = { greeting: "Hello World!" };
-  res.render("hello_world", templateVars);
-});
-
+// --------------------  /urls/new GET  -------------------//
 // Make sure to place this code above the app.get("/urls/:id", ...) route definition.
 app.get("/urls/new", (req, res) => {
   const templateVars = {
@@ -56,23 +74,24 @@ app.get("/urls/new", (req, res) => {
   };
   res.render("urls_new", templateVars);
 });
-
+// -----------------  /urls/:shortURL GET  ----------------//
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
-    shortURL: req.params.shortURL, // keys
-    longURL: urlDatabase[req.params.shortURL], // values
+    shortURL: req.params.shortURL,              // keys
+    longURL: urlDatabase[req.params.shortURL],  // values
     username: req.cookies["username"],
   };
   res.render("urls_show", templateVars);
 });
 
 // app.get("/urls/:shortURL", (req, res) => {
-//   const shortURL = req.params.shortURL; //keys
-//   const longURL = urlDatabase[shortURL]; //values <---
+//   const shortURL = req.params.shortURL;      //keys
+//   const longURL = urlDatabase[shortURL];     //values
 //   const templateVars = { shortURL, longURL };
 //   res.render("urls_show", templateVars);
 // });
 
+// -----------------  /urls/:shortURL GET  ----------------//
 app.get("/u/:shortURL", (req, res) => {
   // redirection to long url after clicking shorturl
   const lurl = urlDatabase[req.params.shortURL];
@@ -84,69 +103,31 @@ app.get("/u/:shortURL", (req, res) => {
 // Our browser then makes a GET request to /urls/:shortURL.
 // Our server looks up the longURL from the database, sends the shortURL and longURL to the urls_show template, generates the HTML, and then sends this HTML back to the browser.
 // The browser then renders this HTML.
-app.post("/urls", (req, res) => { // 1) First urls
-  // Log the POST request body to the console
-  // calling the function
-  const newShortURL = generateRandomString();
-  urlDatabase[newShortURL] = req.body.longURL;
-  res.redirect(`/urls/${newShortURL}`);
-});
 
-const generateRandomString = function () {
-  return Math.random().toString(36).substr(2, 6);
-};
 
-// UPDATE => update the info in the db
+// ----------------  UPDATE /urls/:shortURL  ----------------//
+// update the info in the db
 app.post("/urls/:shortURL", (req, res) => {
-  const shortURL = req.params.shortURL; // extract the id
+  const shortURL = req.params.shortURL;       // extract the id
   const longURL = req.body.longURL;
-  urlDatabase[shortURL] = longURL; // update the db
-  // console.log(urlDatabase);
+  urlDatabase[shortURL] = longURL;            // update the db
   res.redirect("/urls");
 });
 
-// DELETE & POST
+// -----------  DELETE & POST /urls/:shortURL/delete  -------//
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL; // extract the id from the url
   delete urlDatabase[shortURL];
   res.redirect("/urls");
 });
-app.post("/urls", (req, res) => { // 2) Post - urls
-  // console.log(req.body);
-  // console.log(req.body.longURL);
-  let shortU = generateRandomString();
-  urlDatabase[shortU] = req.body.longURL;
-  // console.log(urlDatabase);
-  res.redirect(`/urls/${shortU}`);
-});
 
-// REGISTRATION routes
-app.get("/", (req, res) => {
-  const templateVars = {
-    username: req.cookies["username"],
-    // ... any other vars
-  };
-  res.render("urls_index", templateVars);
-});
-
-// app.get("/registration", (req, res) => {
-//   //  const user = getUsername(req.cookies.username);
-//   res.render("registration");
-// });
-
-// register submit handler
-// app.post("/register", (req, res) => {
-//   users[req.body.username] = req.body.password;
-//   console.log(JSON.stringify(users));
-//   res.cookie("username", req.body.username);
-//   res.redirect("/profile");
-// });
-
+// --------------------  ADD NEW USER  ---------------------//
 const addNewUser = (email, password) => {
   // Create a user id ... generate a unique id
   const userId = Math.random().toString(36).substring(2, 8);
   // Create a new user object
   const newUser = {
+    userId,
     email,
     password,
   };
@@ -156,9 +137,8 @@ const addNewUser = (email, password) => {
   return userId;
 };
 
+// ------------------- FIND USER By EMAIL -------------------//
 const findUserByEmail = (email) => {
-  // using the built-in function here => find
-  // return Object.values(users).find(userObj => userObj.username === username);
   // iterate through the users object
   for (let userId in users) {
     // try the match the username of each
@@ -170,6 +150,7 @@ const findUserByEmail = (email) => {
   return false;
 };
 
+// ---------------- AUTHENTICATE USER --------------------//
 const authenticateUser = (email, password) => {
   // loop through the users db => object
   const user = findUserByEmail(email);
@@ -179,24 +160,21 @@ const authenticateUser = (email, password) => {
   return false;
 };
 
-// USER AUTHENTICATION
+// ---------------- REGISTER GET POST - /register -------//
 // Display the register form
 app.get("/register", (req, res) => {
   const templateVars = { username: req.cookies["username"] };
   res.render("register", templateVars);
 });
-
 // Handling the register form submit
 app.post("/register", (req, res) => {
-  // Extract the username and password from the form
+  // Extract the email and password from the form
   // req.body (body-parser) => get the info from our form
-
   const email = req.body.email;
   const password = req.body.password;
-  // const {name, username, password} = req.body;
   // validation: check that the user is not already in the database
   const user = findUserByEmail(email);
-  // if user is undefined, we can add the user in the db
+  // if user is undefined/doesn't exist, add the user in the db
   if (!user) {
     const userId = addNewUser(email, password);
     // Setting the cookie in the user's browser
@@ -235,9 +213,6 @@ app.post("/login", (req, res) => {
     res.status(401).send("Incorrect login credentials");
   }
 });
-
-// -----------------POST - /urls -----------//
-// ---------------- GET - /urls -------//
 
 // -------------- LOGIN -- GET -- POST -- /urls -----------//
 app.get("/login", (req, res) => {
