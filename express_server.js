@@ -141,7 +141,6 @@ const addNewUser = (email, password) => {
 const findUserByEmail = (email) => {
   // iterate through the users object
   for (let userId in users) {
-    // try the match the username of each
     if (users[userId].email === email) {
       // if it matches return truthy
       return users[userId];
@@ -190,6 +189,56 @@ app.post("/register", (req, res) => {
 //   res.json(users);
 // });
 
+// Display the login form
+app.get("/login", (req, res) => {
+  const templateVars = { username: req.cookies["username"] };
+  res.render("login", templateVars);
+});
+
+// authenticate the user
+app.post("/login", (req, res) => {
+  // extract the information from the form with req.body
+  const email = req.body.email;
+  const password = req.body.password;
+  // user must exist, check for the password
+  const userId = authenticateUser(email, password);
+  if (userId) {
+    // Set the cookie with the user id
+    res.cookie("username", userId);
+    res.redirect("/urls");
+  } else {
+    // user is not authenticated => error message
+    res.status(401).send("Please provide correct login credentials");
+  }
+});
+
+// -------------- LOGIN -- GET -- POST -- /urls -----------//
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+// LOGIN post
+app.post("/login", (req, res) => {
+  let testName = req.body.username;
+  let testPassword = req.body.password;
+  if (users[testName] && users[testName] === testPassword) {
+    res.cookie("username",testName);
+    res.redirect("/profile");
+  } else {
+    res.redirect("/login");
+  }
+});
+
+// -------------- LOGOUT --- GET --- /logout ------------//
+app.get("/logout", (req, res) => {
+  res.render("logout");
+});
+// -------------- LOGOUT --- POST --- /urls --------------//
+app.post("/logout", (req, res) => {
+  // clear the cookie
+  res.clearCookie("username");
+  // res.cookie("username", null);
+  res.redirect("/urls");
+});
 
 
 // -------------------- LISTENING port -------------------//
