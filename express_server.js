@@ -187,6 +187,10 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   // check if the user already in the db
   const user = findUserByEmail(email);
+  if (email === '' || password === '') {
+    res.status(400).send(`Email or password cannot be empty. Please provide a valid email and password.`);
+    console.log(users);
+  }
   // if user is undefined/doesn't exist, add the user in the db
   if (!user) {
     const userId = addNewUser(email, password);
@@ -195,6 +199,7 @@ app.post("/register", (req, res) => {
     res.redirect("/urls");
   } else {
     res.status(403).send(`${email} is already registered! Please login.`);
+    console.log(users);
     res.redirect("/login");
   }
 });
