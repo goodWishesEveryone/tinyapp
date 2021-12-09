@@ -166,8 +166,6 @@ const authenticateUser = (email, password) => {
   if (user && user.password === password) {
     console.log(user.userId);
     return user.userId;
-   
-
   }
   return false;
 };
@@ -207,7 +205,7 @@ app.post("/register", (req, res) => {
 // app.get("/users", (req, res) => {
 //   res.json(users);
 // });
-
+// -------------- LOGIN -- GET -- POST -- /urls -----------//
 // Display the login form
 app.get("/login", (req, res) => {
   const templateVars = { username: req.cookies["user_id"] };
@@ -232,10 +230,9 @@ app.post("/login", (req, res) => {
   }
 });
 
-// -------------- LOGIN -- GET -- POST -- /urls -----------//
-app.get("/login", (req, res) => {
-  res.render("login");
-});
+// app.get("/login", (req, res) => {
+//   res.render("login");
+// });
 // LOGIN post
 // app.post("/login", (req, res) => {
 //   let email = req.body.email;
