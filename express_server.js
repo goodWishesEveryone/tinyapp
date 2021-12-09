@@ -228,11 +228,12 @@ app.get("/login", (req, res) => {
 });
 // LOGIN post
 app.post("/login", (req, res) => {
-  let testName = req.body.username;
-  let testPassword = req.body.password;
-  if (users[testName] && users[testName] === testPassword) {
-    res.cookie("username", testName);
-    res.redirect("/profile");
+  let email = req.body.email;
+  let password = req.body.password;
+  if (users[email] === email && users[password] === password) {
+    let user_id = users[id];
+    res.cookie("user_id", id);
+    res.redirect("/urls");
   } else {
     res.redirect("/login");
   }
