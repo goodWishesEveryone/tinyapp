@@ -33,7 +33,7 @@ const users = {
 };
 
 // -------------  generateRandomString for URL  -----------//
-const generateRandomString = function () {
+const generateRandomString = function() {
   return Math.random().toString(36).substr(2, 6);
 };
 
@@ -190,7 +190,8 @@ app.post("/register", (req, res) => {
     // redirect to '/urls/
     res.redirect("/urls");
   } else {
-    res.status(403).send("User is already registered!");
+    res.status(403).send(`${email} is already registered! Please login.`);
+    res.redirect("/login");
   }
 });
 
