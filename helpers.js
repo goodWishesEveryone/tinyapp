@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 //const uuid = require("uuid/v4");
 //const database =  require("./express_server");
-//const users = require("./express_server");
-const saltRounds = 10;
+const users = require("./express_server");
+//const saltRounds = 10;
 
 
 
@@ -10,25 +10,31 @@ const saltRounds = 10;
 //   // lookup magic...
 //   return user;
 // };
+const generateRandomString = function() {
+  return Math.random().toString(36).substring(2, 8);
+};
 
 // -----------------------  ADD NEW USER  ------------------------//
-const addNewUser = (email, password, users) => {
+const addNewUser = (email, hashedPassword, users) => {
   // Create a user id ... generate a unique id
   const id = Math.random().toString(36).substring(2, 8);
+  const password =  hashedPassword;
   // Create a new user object
   const newUser = {
     id,
     email,
-    password
+    // password: bcrypt.hashSync(password, salt),
+    password: bcrypt.hashSync(password, 10),
+
   };
-  // Add the user to the database
-  // Read the value associated with the key
+  // Add the newUser OBJECT to the database
+  // value associated with the random generated id key
   users[id] = newUser;
   return id;
 };
 
-// --------------------- FIND USER By EMAIL ----------------------//
-const authenticateUserByEmail = (email,users) => {
+// ----- FIND USER By EMAIL => id if exists, FALSE if ! ----------//
+const getUserByEmail = (email,users) => {
   // iterate through the users object
   for (let id in users) {
     //console.log();
@@ -40,18 +46,18 @@ const authenticateUserByEmail = (email,users) => {
   return false;
 };
 // ---------------------- AUTHENTICATE USER ----------------------//
-const authenticateUser = (email, password, database) => {
+const authenticateUser = (email, password, users) => {
   // loop through the users db => object
-  const user = authenticateUserByEmail(email, database);
-  console.log("user", user, password);
-
-  if (user && user.password === password) {
+  const user = getUserByEmail(email, users);  // users[id]
+  //console.log("user ========49", user, password);
+  const matchedPWD = bcrypt.compareSync(password, user.password); // returns true
+  console.log("usermatchedPWD+++++++++51", matchedPWD);
+  if (user && matchedPWD) {
   // console.log(user.userID);
-    return user.id;
+    return user;
   }
   return false;
 };
-
 
 
 module.exports = {
@@ -59,7 +65,9 @@ module.exports = {
   // updateUser,
   addNewUser,
   //getUserByEmail,
-  authenticateUserByEmail,
-  authenticateUser
- // urlsForUser
+  getUserByEmail,
+  authenticateUser,
+  generateRandomString
+
+  // urlsForUser
 };
