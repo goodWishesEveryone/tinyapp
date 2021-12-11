@@ -2,8 +2,8 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 //const uuid = require("uuid/v4");
-const cookieParser = require("cookie-parser");
-//const cookieSession = require('cookie-session');
+//const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 //const bcrypt = require("bcrypt");
 const bcrypt = require("bcryptjs");
 //const password = "purple-monkey-dinosaur"; // found in the req.params object
@@ -18,7 +18,7 @@ const {
   addNewUser,
   getUserByEmail,
   authenticateUser,
-  // generateRandomString
+  generateRandomString
   // urlsForUser
 } = require("./helpers");
 
@@ -26,7 +26,21 @@ const app = express();
 const PORT = 8080; // default port 8080
 
 // ---------------  MIDDLEWARE  --------------------//
-app.use(cookieParser());
+//app.use(cookieParser());
+// cookie session config
+
+app.use(
+  cookieSession({
+    name: "session",
+    // keys: [/* secret keys */],
+    keys: [
+      "8f232fc4-47de-41a1-a8cd-4f9323253715",
+      "1279e050-24c2-4cc6-a176-3d03d66948a2",
+    ],
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  })
+);
 // tells the Express app to use EJS as its templating engine.
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -80,31 +94,33 @@ const users = {
   },
 };
 
-// ----------------  generateRandomString  --------------------//
-const generateRandomString = function() {
-  return Math.random().toString(36).substr(2, 6);
-};
 
 // -------------------  HOMEPAGE  /  ------------------------- //
 app.get("/", (req, res) => {
   //res.send("Hello!");
   res.redirect("/login");
+
 });
 // app.get("/", (req, res) => {
 //   const templateVars = {
 //     urls: urlDatabase,
-//     username: users[req.cookies.user_id]
+//     username: users[req.session.user_id]
 //   };
 //   res.render("urls_index", templateVars);
 // });
 
 // --------------------  /urls GET  POST ----------------------//
 app.get("/urls", (req, res) => {
-  let userID = req.cookies.user_id;
+  //let userID = req.session.user_id;
+  let userID = req.session.user_id;
   const templateVars = {
     urls: urlsForUser(userID),
-    username: users[req.cookies.user_id],
+    username: users[userID],
   };
+  if (!userID) {
+    res.redirect("/login");
+    return;                 // to prevent urls_index from showing
+  }
   res.render("urls_index", templateVars);
 });
 app.post("/urls", (req, res) => {
@@ -112,7 +128,7 @@ app.post("/urls", (req, res) => {
   const newShortURL = generateRandomString();
   urlDatabase[newShortURL] = {
     longURL: req.body.longURL,
-    userID: req.cookies.user_id,
+    userID: req.session.user_id,
   };
   res.redirect(`/urls/${newShortURL}`);
 });
@@ -136,8 +152,8 @@ app.get("/hello", (req, res) => {
 // Make sure to place this code above the app.get("/urls/:id", ...) route definition.
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    //username: req.cookies["user_id"],
-    username: users[req.cookies.user_id]
+    //username: req.session["user_id"],
+    username: users[req.session.user_id],
   };
   //const email = req.body.email;
   //const user = authenticateUserByEmail(email, users);
@@ -150,11 +166,19 @@ app.get("/urls/new", (req, res) => {
 });
 // -------------------  /urls/:shortURL GET  -----------------//
 app.get("/urls/:shortURL", (req, res) => {
+  if (!urlDatabase[req.params.shortURL]) {
+    return res.send(`Long URL not found.  Please provide correct shortURL. `);
+  }
+  const user = req.session.user_id;
+  if (!user) {
+    res.redirect('/login');
+  }
   const templateVars = {
     shortURL: req.params.shortURL, // keys
     longURL: urlDatabase[req.params.shortURL].longURL, // values
-    username: req.cookies["user_id"],
+    username: req.session["user_id"],
   };
+
   console.log(templateVars);
   res.render("urls_show", templateVars);
 });
@@ -175,7 +199,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL; // extract the id
   const longURL = req.body.longURL;
-  const userID = req.cookies["user_id"];
+  const userID = req.session["user_id"];
 
   if (!userID) {
     res.status(403).send("Please login");
@@ -190,7 +214,8 @@ app.post("/urls/:shortURL", (req, res) => {
 // -----------  DELETE & POST /urls/:shortURL/delete  ------------//
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL; // extract the id from the url
-  const userID = req.cookies["user_id"];
+  const userID = req.session["user_id"];
+  req.session.user_id = userID;
 
   if (!userID) {
     res.status(403).send("Please login first");
@@ -212,7 +237,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 // Display the register form
 app.get("/register", (req, res) => {
   const templateVars = {
-    username: req.cookies["user_id"],
+    username: req.session["user_id"],
+    //req.session.user_id = userId;
   };
   res.render("register", templateVars);
 });
@@ -244,9 +270,9 @@ app.post("/register", (req, res) => {
     // const id = addNewUser(email, hashedPassword, users);
     const id = generateRandomString();
     users[id] = { email, id, password: hashedPassword };
-    console.log('uuuuuu', users);
     // Setting the cookie in the user's browser
-    res.cookie("user_id", id); // username is a #
+    //res.cookie("user_id", id); // username is a #
+    req.session.user_id = id;
     res.redirect("/urls"); // should we asked user to login? or we make them login rigth away?
   } else {
     res.status(403).send(`${email} is already registered! Please login.`);
@@ -259,9 +285,11 @@ app.get("/users", (req, res) => {
   res.json(users);
 });
 
-// -------------- LOGIN -- GET -- POST -- /urls ------------------//
+// -------------- LOGIN -- GET -- POST -- /login ------------------//
 app.get("/login", (req, res) => {
-  const templateVars = { username: req.cookies["user_id"] };
+  //const templateVars = { username: req.session["user_id"] };
+  //req.session.user_id = user_id;
+  const templateVars = { username: req.session.user_id };
   res.render("login", templateVars);
   res.redirect("/urls");
 });
@@ -272,9 +300,11 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
   // user must exist, check for the email && password
   const user = authenticateUser(email, password, users);
+  console.log(user);
   if (user) {
     // Set the cookie with the user id
-    res.cookie("user_id", user.id);
+    //res.cookie("user_id", user.id);
+    req.session.user_id = user.id;
     res.redirect("/urls");
   } else {
     // user is not authenticated => error message
@@ -289,9 +319,12 @@ app.get("/logout", (req, res) => {
 // -------------- LOGOUT --- POST --- /urls ---------------------//
 app.post("/logout", (req, res) => {
   // clear the cookie
-  res.clearCookie("user_id");
+  //res.clearCookie("user_id");
+  req.session = null;
   // res.cookie("username", null);
+  //res.redirect("/urls");
   res.redirect("/urls");
+
 });
 
 // -------------------- LISTENING port --------------------------//

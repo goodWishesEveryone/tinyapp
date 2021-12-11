@@ -4,20 +4,16 @@ const bcrypt = require("bcrypt");
 const users = require("./express_server");
 //const saltRounds = 10;
 
-
-
-// const getUserByEmail = function (email, database) {
-//   // lookup magic...
-//   return user;
-// };
-const generateRandomString = function() {
-  return Math.random().toString(36).substring(2, 8);
+// ----------------  generateRandomString  --------------------//
+const generateRandomString = function () {
+  return Math.random().toString(36).substr(2, 6);
 };
 
 // -----------------------  ADD NEW USER  ------------------------//
 const addNewUser = (email, hashedPassword, users) => {
   // Create a user id ... generate a unique id
-  const id = Math.random().toString(36).substring(2, 8);
+  // const id = Math.random().toString(36).substring(2, 8);
+  const id = generateRandomString();
   const password =  hashedPassword;
   // Create a new user object
   const newUser = {
@@ -33,7 +29,7 @@ const addNewUser = (email, hashedPassword, users) => {
   return id;
 };
 
-// ----- FIND USER By EMAIL => id if exists, FALSE if ! ----------//
+// ----- FIND USER By EMAIL => return id if exists, FALSE if ! ----------//
 const getUserByEmail = (email,users) => {
   // iterate through the users object
   for (let id in users) {
@@ -51,7 +47,6 @@ const authenticateUser = (email, password, users) => {
   const user = getUserByEmail(email, users);  // users[id]
   //console.log("user ========49", user, password);
   const matchedPWD = bcrypt.compareSync(password, user.password); // returns true
-  console.log("usermatchedPWD+++++++++51", matchedPWD);
   if (user && matchedPWD) {
   // console.log(user.userID);
     return user;
@@ -68,6 +63,5 @@ module.exports = {
   getUserByEmail,
   authenticateUser,
   generateRandomString
-
   // urlsForUser
 };
