@@ -29,7 +29,7 @@ const addNewUser = (email, hashedPassword, users) => {
   return id;
 };
 
-// ----- FIND USER By EMAIL => return id if exists, FALSE if ! ----------//
+// ----- FIND USER By EMAIL => return id if exists, undefined if ! ----------//
 const getUserByEmail = (email,users) => {
   // iterate through the users object
   for (let id in users) {
@@ -39,14 +39,14 @@ const getUserByEmail = (email,users) => {
       return users[id];
     }
   }
-  return false;
+  return undefined;
 };
 // ---------------------- AUTHENTICATE USER ----------------------//
 const authenticateUser = (email, password, users) => {
   // loop through the users db => object
   const user = getUserByEmail(email, users);  // users[id]
   //console.log("user ========49", user, password);
-  const matchedPWD = bcrypt.compareSync(password, user.password); // returns true
+  const matchedPWD = user ? bcrypt.compareSync(password, user.password) : null; // returns true
   if (user && matchedPWD) {
   // console.log(user.userID);
     return user;

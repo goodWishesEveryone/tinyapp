@@ -14,16 +14,29 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-item nav-link" href="/urls">My URLs</a>
-        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        <% if (username) { %> Logged In As <%= username.email %>
-        <form method="POST" action="/logout">
-          <input type="submit" value="Logout" />
-        </form>
+        <% if (locals.username) { %>
+        <div style="display: flex">
+          <div class="nav-item" style="flex: 1; width: 300px">
+            <a style="color: #ffffff" href="/urls">My URLs  </a>
+            <a style="color: #ffffff" href="/urls/new">Create New URL</a>
+          </div>
+          <div
+            class="nav-item"
+            style="flex: 1; width: 300px; text-align: right"
+          >
+            Logged In As <%= username.email %>
+            <form style="display: inline" method="POST" action="/logout">
+              <input type="submit" value="Logout" />
+            </form>
+          </div>
+        </div>
         <% } else { %>
-        <div style="margin-right:700px">
-          <a href="/login">Login</a>
-          <a href="/register">Register</a>
+        <div class="nav-item">
+          <% if (!locals.loginURL){%>
+          <a style="color: #ffffff" href="/login">Login</a>
+          <% } %> <% if (!locals.registerURL){%>
+          <a style="color: #ffffff" href="/register">Register</a>
+          <% } %>
         </div>
         <% } %>
       </div>

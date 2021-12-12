@@ -25,17 +25,17 @@
       <div class="card-footer text-muted"></div>
     </div>
 
-    <div class="update-container">
+    <div class="update-container" align="center">
       <h1>Edit</h1>
 
       <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
-        <div class="form-group mb-2">
+        <div class="form-group mb-2" align="center">
           <label for="longURL">New URL:</label>
           <input
             class="form-control"
             type="text"
             name="longURL"
-            placeholder="http://"
+            placeholder="http://www"
             style="width: 300px; margin: 3em"
           />
           <button type="submit" class="btn btn-primary">Submit</button>
