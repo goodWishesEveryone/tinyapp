@@ -74,7 +74,7 @@ const users = {
   },
 };
 
-const urlsForUser = function(id) {
+const urlsForUser = function (id) {
   let userURLs = {};
   for (let shortURL in urlDatabase) {
     if (id === urlDatabase[shortURL].userID) {
@@ -214,8 +214,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
     res.status(403).send("Please login first");
     return res.redirect("/login");
     // return res.status(403).render("login", {
-    //   errorMessage:
-    //     "Please login first."}
+    //   errorMessage: "Please login first."}
   }
 
   if (shortURL) {
@@ -259,16 +258,12 @@ app.post("/register", (req, res) => {
     users[id] = { email, id, password: hashedPassword };
     console.log(users);
     // Setting the cookie in the user's browser
-    //res.cookie("user_id", id); // username is a #
+    // res.cookie("user_id", id); // username is a #
     req.session.user_id = id;
     res.redirect("/urls");
   } else {
     res.status(403).send(`${email} is already registered! Please login.`);
-    // return res
-    // .status(403)
-    // .render("login", {
-    //   errorMessage:
-    //   `${email} is already registered! Please login.`,
+    //return res.status(403).render("login", { errorMessage: `${email} is already registered! Please login.`
 
     res.redirect("/login");
   }
@@ -298,12 +293,17 @@ app.post("/login", (req, res) => {
   const user = authenticateUser(email, password, users);
   if (user) {
     // Set the cookie with the user id
-    //res.cookie("user_id", user.id);
+    // res.cookie("user_id", user.id);
     req.session.user_id = user.id;
     res.redirect("/urls");
   } else {
     // user is not authenticated => error message
-    res.status(403).send("Please provide correct login credentials");
+    res
+      .status(403)
+      .send(`${email} is not registered yet. Please register first.`);
+    //   return res.status(403).render("login", {
+    //       errorMessage: "Please correct login credentials.",
+    // });
   }
 });
 

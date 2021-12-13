@@ -1,12 +1,11 @@
 const bcrypt = require("bcrypt");
-const users = require("./express_server");
 
-// ----------------  generateRandomString  --------------------//
+// ----------------------  generateRandomString  -----------------------//
 const generateRandomString = function() {
   return Math.random().toString(36).substr(2, 6);
 };
 
-// -----------------------  ADD NEW USER  ------------------------//
+// --------------------------  ADD NEW USER  ---------------------------//
 const addNewUser = (email, hashedPassword, users) => {
   // Create a user id ... generate a unique id
   // const id = Math.random().toString(36).substring(2, 8);
@@ -36,11 +35,11 @@ const getUserByEmail = (email,users) => {
   }
   return undefined;
 };
-// ---------------------- AUTHENTICATE USER ----------------------//
+// ------------------------- AUTHENTICATE USER -------------------------//
 const authenticateUser = (email, password, users) => {
   // loop through the users db => object
   const user = getUserByEmail(email, users);  // users[id]
-  const matchedPWD = user ? bcrypt.compareSync(password, user.password) : null; // returns true
+  const matchedPWD = user ? bcrypt.compareSync(password, user.password) : null;
   if (user && matchedPWD) {
     return user;
   }
@@ -49,7 +48,6 @@ const authenticateUser = (email, password, users) => {
 
 module.exports = {
   addNewUser,
-  //getUserByEmail,
   getUserByEmail,
   authenticateUser,
   generateRandomString

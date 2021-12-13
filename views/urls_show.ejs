@@ -8,7 +8,7 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
-    <title>URL - TinyApp Example</title>
+    <title>Edit URL - TinyApp</title>
   </head>
 
   <body align="center">
@@ -25,10 +25,16 @@
       <div class="card-footer text-muted"></div>
     </div>
 
-    <div class="update-container" align="center" >
-      <h1>Edit</h1>
+    <div class="update-container" align="center">
+      <h1 style="color: rgb(142, 160, 155)" align="center"
+      >Edit</h1>
 
-      <form class="form-inline" action="/urls/<%= shortURL %>" method="POST" align="center">
+      <form
+        class="form-inline"
+        action="/urls/<%= shortURL %>"
+        method="POST"
+        align="center"
+      >
         <div class="form-group mb-2" align="center">
           <label for="longURL" align="center">New URL:</label>
           <input
@@ -40,7 +46,9 @@
             required="true"
             align="center"
           />
-          <button type="submit" class="btn btn-primary" align="center">Submit</button>
+          <button type="submit" class="btn btn-primary" align="right">
+            Submit
+          </button>
         </div>
       </form>
     </div>
