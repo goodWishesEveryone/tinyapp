@@ -11,7 +11,7 @@
     <title>URL - TinyApp Example</title>
   </head>
 
-  <body>
+  <body align="center">
     <%- include('partials/_header') %>
     <div class="card text-center">
       <div class="card-header"></div>
@@ -25,20 +25,22 @@
       <div class="card-footer text-muted"></div>
     </div>
 
-    <div class="update-container" align="center">
+    <div class="update-container" align="center" >
       <h1>Edit</h1>
 
-      <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
+      <form class="form-inline" action="/urls/<%= shortURL %>" method="POST" align="center">
         <div class="form-group mb-2" align="center">
-          <label for="longURL">New URL:</label>
+          <label for="longURL" align="center">New URL:</label>
           <input
             class="form-control"
             type="text"
             name="longURL"
-            placeholder="http://www"
+            placeholder="http://www.newURL.com"
             style="width: 300px; margin: 3em"
+            required="true"
+            align="center"
           />
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary" align="center">Submit</button>
         </div>
       </form>
     </div>

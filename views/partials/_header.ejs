@@ -31,12 +31,14 @@
           </div>
         </div>
         <% } else { %>
-        <div class="nav-item">
+        <div class="nav-item" align="right">
           <% if (!locals.loginURL){%>
-          <a style="color: #ffffff" href="/login">Login</a>
-          <% } %> <% if (!locals.registerURL){%>
-          <a style="color: #ffffff" href="/register">Register</a>
-          <% } %>
+            <p style="color :rgb(121, 184, 163);"> For registered user, please login; otherwise, please create an account.</p>
+            <a style="color: #ffffff" href="/login" align="right">Login</a>
+            <% } %> 
+          <% if (!locals.registerURL){%>
+            <a style="color: #ffffff" href="/register" align="right">Register</a>
+            <% } %>
         </div>
         <% } %>
       </div>
