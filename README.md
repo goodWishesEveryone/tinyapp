@@ -17,15 +17,15 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 !["Screenshot of Edit URL page"](https://github.com/goodWishesEveryone/tinyapp/blob/master/docs/editURL-page.png?raw=true)
 
-!["Screenshots of Error Message if not logged in when accessing routes: /urls, /urls/new, and /urls/:id"](https://github.com/goodWishesEveryone/tinyapp/blob/master/docs/errorNotLoggedIn-urls.urlsNew.urlsId-Page.png.png.png?raw=true)
+!["Screenshots of Error Message if not logged in when accessing routes: /urls, /urls/new, and /urls/:id"](https://raw.githubusercontent.com/goodWishesEveryone/tinyapp/1395342dbac948f6d1917898f4ab72ea09d69e71/docs/errorNotLoggedIn%20-%20urls.urlsNew.urlsId-Page.png)
 
-!["Screenshot of a message when user press SUBMIT without providing a URL in EDIT My URL page"](https://github.com/goodWishesEveryone/tinyapp/blob/master/docs/requiredField-editURL.png.png?raw=true)
+!["Screenshot of a message when user press SUBMIT without providing a URL in EDIT My URL page"](https://raw.githubusercontent.com/goodWishesEveryone/tinyapp/1395342dbac948f6d1917898f4ab72ea09d69e71/docs/requiredField-editURL.png)
 
-!["Screenshot of Error Message when user LOGIN without providing correct password"](https://github.com/goodWishesEveryone/tinyapp/blob/master/docs/errorCredentials-loginPage.png.png?raw=true)
+!["Screenshot of Error Message when user LOGIN without providing correct password"](https://raw.githubusercontent.com/goodWishesEveryone/tinyapp/1395342dbac948f6d1917898f4ab72ea09d69e71/docs/errorCredentials-loginPage.png)
 
-!["Screenshot of Error Message when user LOGIN but Email doesn't exists in Database"](https://github.com/goodWishesEveryone/tinyapp/blob/master/docs/errorNotRegisteredUser-loginPage.png.png?raw=true)
+!["Screenshot of Error Message when user LOGIN but Email doesn't exists in Database"](https://raw.githubusercontent.com/goodWishesEveryone/tinyapp/1395342dbac948f6d1917898f4ab72ea09d69e71/docs/errorNotRegisteredUser-loginPage.png)
 
-!["Screenshot of Error Message when user REGISTER but Email already exists in Database"](https://github.com/goodWishesEveryone/tinyapp/blob/master/docs/errorRegisteredUser-registerPage.png.png?raw=true)
+!["Screenshot of Error Message when user REGISTER but Email already exists in Database"](https://raw.githubusercontent.com/goodWishesEveryone/tinyapp/1395342dbac948f6d1917898f4ab72ea09d69e71/docs/errorRegisteredUser-registerPage.png)
 
 
 ## Dependencies
