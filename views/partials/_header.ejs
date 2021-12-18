@@ -18,6 +18,7 @@
         <div style="display: flex">
           <div class="nav-item" style="flex: 1; width: 300px">
             <a style="color: #ffffff" href="/urls">My URLs  </a>
+            <a text-muted></a>
             <a style="color: #ffffff" href="/urls/new">Create New URL</a>
           </div>
           <div
@@ -33,7 +34,7 @@
         <% } else { %>
         <div class="nav-item" align="right">
           <% if (!locals.loginURL){%>
-            <p style="color :rgb(121, 184, 163);"> For registered user, please login; otherwise, please create an account.</p>
+            <p style="color :rgb(121, 184, 163);"> For registered user, please login;  otherwise, please create an account.</p>
             <a style="color: #ffffff" href="/login" align="right">Login</a>
             <% } %> 
           <% if (!locals.registerURL){%>
